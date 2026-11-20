@@ -4,6 +4,7 @@ require_once dirname(__DIR__, 2) . '/classes/FinanceCashbook.php';
 require_once dirname(__DIR__, 2) . '/classes/FinanceCategory.php';
 require_once dirname(__DIR__, 2) . '/classes/FinanceOrder.php';
 require_once dirname(__DIR__, 2) . '/classes/FinanceCashbookHistory.php';
+require_once dirname(__DIR__, 2) . '/classes/FinanceCashbookWebhook.php';
 
 class AdminFinanceCashbookController extends ModuleAdminController
 {
@@ -578,6 +579,7 @@ class AdminFinanceCashbookController extends ModuleAdminController
 
                     if ($cashbook->update()) {
                         $this->recordUpdateHistory($idCashbook, $oldValues, $cashbook);
+                        FinanceCashbookWebhook::send('updated', $idCashbook);
 
                         Tools::redirectAdmin(
                             self::$currentIndex .
@@ -590,6 +592,7 @@ class AdminFinanceCashbookController extends ModuleAdminController
                 
                     if ($cashbook->add()) {
                         $this->recordAddHistory((int)$cashbook->id);
+                        FinanceCashbookWebhook::send('added', (int)$cashbook->id);
                 
                         Tools::redirectAdmin(
                             self::$currentIndex .
@@ -703,6 +706,7 @@ class AdminFinanceCashbookController extends ModuleAdminController
 
         if ($result && $idCashbook && $oldValues) {
             $this->recordDeleteHistory($idCashbook, $oldValues);
+            FinanceCashbookWebhook::send('deleted', $idCashbook, $oldValues);
         }
 
         return $result;
@@ -730,6 +734,7 @@ class AdminFinanceCashbookController extends ModuleAdminController
         if ($result) {
             foreach ($history as $idCashbook => $oldValues) {
                 $this->recordDeleteHistory($idCashbook, $oldValues);
+                FinanceCashbookWebhook::send('deleted', $idCashbook, $oldValues);
             }
         }
 

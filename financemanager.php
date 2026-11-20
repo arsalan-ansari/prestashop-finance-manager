@@ -10,7 +10,7 @@ class FinanceManager extends Module
     {
         $this->name = 'financemanager';
         $this->tab = 'administration';
-        $this->version = '1.0.3';
+        $this->version = '1.0.4';
         $this->author = 'Arsalan';
         $this->need_instance = 0;
         $this->bootstrap = true;
@@ -183,8 +183,12 @@ class FinanceManager extends Module
 
         if (Tools::isSubmit('submitFinanceManagerSettings')) {
             $enabled = (int)Tools::getValue('FINANCE_HISTORY_ENABLED');
+            $webhookEnabled = (int)Tools::getValue('FINANCE_PABBLY_WEBHOOK_ENABLED');
+            $webhookUrl = trim(Tools::getValue('FINANCE_PABBLY_WEBHOOK_URL'));
 
             Configuration::updateValue('FINANCE_HISTORY_ENABLED', $enabled ? 1 : 0);
+            Configuration::updateValue('FINANCE_PABBLY_WEBHOOK_ENABLED', $webhookEnabled ? 1 : 0);
+            Configuration::updateValue('FINANCE_PABBLY_WEBHOOK_URL', $webhookUrl);
 
             $output .= $this->displayConfirmation(
                 $this->trans(
@@ -244,6 +248,47 @@ class FinanceManager extends Module
                             'Modules.Financemanager.Admin'
                         ),
                     ],
+                    [
+                        'type' => 'switch',
+                        'label' => $this->trans(
+                            'Pabbly Webhook',
+                            [],
+                            'Modules.Financemanager.Admin'
+                        ),
+                        'name' => 'FINANCE_PABBLY_WEBHOOK_ENABLED',
+                        'is_bool' => true,
+                        'values' => [
+                            [
+                                'id' => 'pabbly_webhook_enabled_on',
+                                'value' => 1,
+                                'label' => $this->trans('Enabled', [], 'Admin.Global'),
+                            ],
+                            [
+                                'id' => 'pabbly_webhook_enabled_off',
+                                'value' => 0,
+                                'label' => $this->trans('Disabled', [], 'Admin.Global'),
+                            ],
+                        ],
+                        'desc' => $this->trans(
+                            'Send Finance Manager transaction events to Pabbly Connect.',
+                            [],
+                            'Modules.Financemanager.Admin'
+                        ),
+                    ],
+                    [
+                        'type' => 'text',
+                        'label' => $this->trans(
+                            'Pabbly Webhook URL',
+                            [],
+                            'Modules.Financemanager.Admin'
+                        ),
+                        'name' => 'FINANCE_PABBLY_WEBHOOK_URL',
+                        'desc' => $this->trans(
+                            'Paste the Pabbly Connect webhook listener URL here.',
+                            [],
+                            'Modules.Financemanager.Admin'
+                        ),
+                    ],
                 ],
                 'submit' => [
                     'title' => $this->trans('Save', [], 'Admin.Actions'),
@@ -269,6 +314,18 @@ class FinanceManager extends Module
             null,
             null,
             1
+        );
+
+        $helper->fields_value['FINANCE_PABBLY_WEBHOOK_ENABLED'] = (int)Configuration::get(
+            'FINANCE_PABBLY_WEBHOOK_ENABLED',
+            null,
+            null,
+            null,
+            1
+        );
+
+        $helper->fields_value['FINANCE_PABBLY_WEBHOOK_URL'] = (string)Configuration::get(
+            'FINANCE_PABBLY_WEBHOOK_URL'
         );
 
         return $helper->generateForm([$fieldsForm]);
