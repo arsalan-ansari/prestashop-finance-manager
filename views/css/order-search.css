@@ -1,0 +1,74 @@
+#financeOrderSearchModal .modal-dialog {
+    width: 900px;
+    max-width: 95%;
+}
+
+#financeOrderSearchModal .modal-body {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+#finance_order_search {
+    margin-bottom: 15px;
+}
+
+#finance_order_results tr {
+    cursor: pointer;
+}
+
+#finance_order_results tbody tr:hover {
+    background: #f5f5f5;
+}
+
+#finance_order_results td {
+    vertical-align: middle;
+}
+
+#finance_order_results .btn {
+    min-width: 80px;
+}
+
+.finance-order-selected {
+    background: #dff0d8 !important;
+}
+
+.finance-order-number {
+    font-weight: 600;
+}
+
+.finance-order-customer {
+    font-weight: 500;
+}
+
+.finance-order-reference {
+    color: #777;
+    font-size: 12px;
+}
+
+.finance-order-amount {
+    font-weight: bold;
+    color: #28a745;
+    text-align: right;
+}
+
+.finance-order-date {
+    white-space: nowrap;
+}
+
+.finance-search-loading {
+    text-align: center;
+    padding: 30px;
+    color: #777;
+}
+
+.finance-search-empty {
+    text-align: center;
+    padding: 30px;
+    color: #999;
+}
+
+.finance-search-error {
+    text-align: center;
+    padding: 30px;
+    color: #d9534f;
+}

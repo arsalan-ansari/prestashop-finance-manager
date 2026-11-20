@@ -1,0 +1,86 @@
+.fm-dashboard-card {
+    border: 1px solid #d3d8db;
+    border-radius: 4px;
+    background: #fff;
+    margin-bottom: 20px;
+}
+
+.fm-dashboard-card .panel-heading,
+.fm-dashboard-card .card-header {
+    font-weight: 600;
+}
+
+.fm-summary-value {
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.fm-income {
+    color: #28a745;
+}
+
+.fm-expense {
+    color: #dc3545;
+}
+
+.fm-toolbar {
+    margin-bottom: 20px;
+}
+
+.fm-toolbar .btn {
+    margin-right: 10px;
+}
+
+.fm-table th {
+    font-weight: 600;
+    vertical-align: middle;
+}
+
+.fm-table td {
+    vertical-align: middle;
+}
+
+.fm-badge-income {
+    display: inline-block;
+    padding: 4px 10px;
+    background: #28a745;
+    color: #fff;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.fm-badge-expense {
+    display: inline-block;
+    padding: 4px 10px;
+    background: #dc3545;
+    color: #fff;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.fm-amount-income {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.fm-amount-expense {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.fm-empty {
+    text-align: center;
+    color: #999;
+    padding: 30px;
+}
+
+.fm-report-table td,
+.fm-report-table th {
+    vertical-align: middle;
+}
+
+.fm-report-table .text-end {
+    text-align: right;
+}
