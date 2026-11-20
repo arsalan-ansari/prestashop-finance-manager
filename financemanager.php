@@ -183,10 +183,14 @@ class FinanceManager extends Module
 
         if (Tools::isSubmit('submitFinanceManagerSettings')) {
             $enabled = (int)Tools::getValue('FINANCE_HISTORY_ENABLED');
-            $webhookEnabled = (int)Tools::getValue('FINANCE_PABBLY_WEBHOOK_ENABLED');
-            $webhookUrl = trim(Tools::getValue('FINANCE_PABBLY_WEBHOOK_URL'));
+            $webhookEnabled = (int)Tools::getValue('FINANCE_WEBHOOK_ENABLED');
+            $webhookUrl = trim(Tools::getValue('FINANCE_WEBHOOK_URL'));
 
             Configuration::updateValue('FINANCE_HISTORY_ENABLED', $enabled ? 1 : 0);
+            Configuration::updateValue('FINANCE_WEBHOOK_ENABLED', $webhookEnabled ? 1 : 0);
+            Configuration::updateValue('FINANCE_WEBHOOK_URL', $webhookUrl);
+
+            // Also sync legacy keys for backward compatibility
             Configuration::updateValue('FINANCE_PABBLY_WEBHOOK_ENABLED', $webhookEnabled ? 1 : 0);
             Configuration::updateValue('FINANCE_PABBLY_WEBHOOK_URL', $webhookUrl);
 
@@ -251,26 +255,26 @@ class FinanceManager extends Module
                     [
                         'type' => 'switch',
                         'label' => $this->trans(
-                            'Pabbly Webhook',
+                            'Cloud Webhook Sync (Google Sheets & ERP)',
                             [],
                             'Modules.Financemanager.Admin'
                         ),
-                        'name' => 'FINANCE_PABBLY_WEBHOOK_ENABLED',
+                        'name' => 'FINANCE_WEBHOOK_ENABLED',
                         'is_bool' => true,
                         'values' => [
                             [
-                                'id' => 'pabbly_webhook_enabled_on',
+                                'id' => 'webhook_enabled_on',
                                 'value' => 1,
                                 'label' => $this->trans('Enabled', [], 'Admin.Global'),
                             ],
                             [
-                                'id' => 'pabbly_webhook_enabled_off',
+                                'id' => 'webhook_enabled_off',
                                 'value' => 0,
                                 'label' => $this->trans('Disabled', [], 'Admin.Global'),
                             ],
                         ],
                         'desc' => $this->trans(
-                            'Send Finance Manager transaction events to Pabbly Connect.',
+                            'Automatically dispatch real-time transaction events (added, updated, deleted) to external cloud automation endpoints.',
                             [],
                             'Modules.Financemanager.Admin'
                         ),
@@ -278,13 +282,13 @@ class FinanceManager extends Module
                     [
                         'type' => 'text',
                         'label' => $this->trans(
-                            'Pabbly Webhook URL',
+                            'Cloud Webhook URL',
                             [],
                             'Modules.Financemanager.Admin'
                         ),
-                        'name' => 'FINANCE_PABBLY_WEBHOOK_URL',
+                        'name' => 'FINANCE_WEBHOOK_URL',
                         'desc' => $this->trans(
-                            'Paste the Pabbly Connect webhook listener URL here.',
+                            'Enter your webhook listener URL. Seamlessly syncs with Google Sheets, Airtable, or ERP systems via Zapier, Make.com, Pabbly Connect, n8n, or custom API endpoints.',
                             [],
                             'Modules.Financemanager.Admin'
                         ),
@@ -316,17 +320,17 @@ class FinanceManager extends Module
             1
         );
 
-        $helper->fields_value['FINANCE_PABBLY_WEBHOOK_ENABLED'] = (int)Configuration::get(
-            'FINANCE_PABBLY_WEBHOOK_ENABLED',
-            null,
-            null,
-            null,
-            1
-        );
+        $webhookEnabled = Configuration::get('FINANCE_WEBHOOK_ENABLED');
+        if ($webhookEnabled === false) {
+            $webhookEnabled = Configuration::get('FINANCE_PABBLY_WEBHOOK_ENABLED', null, null, null, 1);
+        }
+        $helper->fields_value['FINANCE_WEBHOOK_ENABLED'] = (int)$webhookEnabled;
 
-        $helper->fields_value['FINANCE_PABBLY_WEBHOOK_URL'] = (string)Configuration::get(
-            'FINANCE_PABBLY_WEBHOOK_URL'
-        );
+        $webhookUrl = (string)Configuration::get('FINANCE_WEBHOOK_URL');
+        if (empty($webhookUrl)) {
+            $webhookUrl = (string)Configuration::get('FINANCE_PABBLY_WEBHOOK_URL');
+        }
+        $helper->fields_value['FINANCE_WEBHOOK_URL'] = $webhookUrl;
 
         return $helper->generateForm([$fieldsForm]);
     }

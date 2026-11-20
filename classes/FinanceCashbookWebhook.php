@@ -4,11 +4,19 @@ class FinanceCashbookWebhook
 {
     public static function send($action, $idCashbook, $values = null)
     {
-        if (!(int)Configuration::get('FINANCE_PABBLY_WEBHOOK_ENABLED', null, null, null, 1)) {
+        $enabled = Configuration::get('FINANCE_WEBHOOK_ENABLED');
+        if ($enabled === false) {
+            $enabled = Configuration::get('FINANCE_PABBLY_WEBHOOK_ENABLED', null, null, null, 1);
+        }
+
+        if (!(int)$enabled) {
             return true;
         }
 
-        $webhookUrl = trim((string)Configuration::get('FINANCE_PABBLY_WEBHOOK_URL'));
+        $webhookUrl = trim((string)Configuration::get('FINANCE_WEBHOOK_URL'));
+        if ($webhookUrl === '') {
+            $webhookUrl = trim((string)Configuration::get('FINANCE_PABBLY_WEBHOOK_URL'));
+        }
 
         if ($webhookUrl === '') {
             return true;
